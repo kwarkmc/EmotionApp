@@ -1,15 +1,15 @@
 import speech_recognition as sr
-
-AUDIO_FILE = "hello.wav"
-
+#import sys
 
 r = sr.Recognizer()
-with sr.AudioFile(AUDIO_FILE) as source:
-    audio = r.record(source)  # 전체 audio file 읽기
+kr_audio = sr.AudioFile('C:/Users/User/Desktop/딥러닝/voice/1. VoiceToEmotion_Data_Audio_긍3.wav')
 
-try:
-    print("Google Speech Recognition thinks you said : " + r.recognize_google(audio, language='ko'))
-except sr.UnknownValueError:
-    print("Google Speech Recognition could not understand audio")
-except sr.RequestError as e:
-    print("Could not request results from Google Speech Recognition service; {0}".format(e))
+with kr_audio as source:
+    audio = r.record(source)
+
+temp = r.recognize_google(audio, language='ko-KR')
+
+#sys.stdout = open('news_out.txt', 'w')
+print(temp)
+
+#sys.stdout.close()
