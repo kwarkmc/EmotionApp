@@ -196,10 +196,10 @@ model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy']
 
 history = model.fit(train_X_ex, train_y, epochs=10, batch_size=16, validation_data=(test_X_ex, test_y))
 
-model.save('/filler_classifier_by_train2_1215.h5')
+model.save('./weight.h5')
 
 plt.plot(history.history['accuracy'], label='Train Accuracy')
-#plt.plot(history.history['val_accuracy'], label='Validation Accuracy')
+plt.plot(history.history['val_accuracy'], label='Validation Accuracy')
 plt.xlabel('Epochs')
 plt.ylabel('Accuracy')
 plt.legend()
