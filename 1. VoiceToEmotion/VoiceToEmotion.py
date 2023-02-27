@@ -12,12 +12,13 @@ import librosa
 import librosa.display
 import sklearn
 from unicodedata import normalize
+import tensorflow as tf
+from keras import layers
 import random as rn
 from keras.layers import Dense
 from keras import Input
 from keras import Model
 from keras.utils import to_categorical
-from keras.layers import Dense,Flatten, Conv2D, MaxPooling2D
 
 
 # In[2]:
@@ -103,6 +104,7 @@ for filename in os.listdir(DATA_DIR + "test/"):
       continue
 
     wav, sr = librosa.load(DATA_DIR + "test/" + filename, sr=None)
+    print(filename)
 
     mfcc = librosa.feature.mfcc(wav, sr=sr, n_mfcc=100, n_fft=400, hop_length=160)
     mfcc = sklearn.preprocessing.scale(mfcc, axis=1)
@@ -146,6 +148,7 @@ test_X_ex = np.expand_dims(test_mfccs, -1)
 print('train X shape:', train_X_ex.shape)
 print('test X shape:', test_X_ex.shape)
 
+"""
 ip = Input(shape=train_X_ex[0].shape)
 
 m = Conv2D(32, kernel_size=(4,4), activation='relu')(ip)
@@ -180,11 +183,23 @@ history = model.fit(train_X_ex,
                     batch_size=32,
                     verbose=1,
                     validation_data=(test_X_ex, test_y))
+"""
+
+model = tf.keras.Sequential()
+model.add(layers.Conv2D(filters=32, kernel_size=(3, 3), activation='relu', input_shape=(100, 700, 1)))
+model.add(layers.MaxPooling2D(pool_size=(2, 2)))
+model.add(layers.Flatten())
+model.add(layers.Dense(64, activation='relu'))
+model.add(layers.Dense(2, activation='sigmoid'))
+
+model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+
+history = model.fit(train_X_ex, train_y, epochs=10, batch_size=16, validation_data=(test_X_ex, test_y))
 
 model.save('/filler_classifier_by_train2_1215.h5')
 
 plt.plot(history.history['accuracy'], label='Train Accuracy')
-plt.plot(history.history['val_accuracy'], label='Validation Accuracy')
+#plt.plot(history.history['val_accuracy'], label='Validation Accuracy')
 plt.xlabel('Epochs')
 plt.ylabel('Accuracy')
 plt.legend()
