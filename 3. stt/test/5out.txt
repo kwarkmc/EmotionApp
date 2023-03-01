@@ -1,0 +1,9 @@
+두 눈에 눈물이 핑 돌았습니다
+result2:
+{   'alternative': [   {   'confidence': 0.89914012,
+                           'transcript': '불안한 듯 입을 다물고 경주를 지켜봤다'},
+                       {'transcript': '불안한 듯 입을 다물고 경주를 지켜 봤다'},
+                       {'transcript': '불안한 듯 입을 다물고 경주를 지켜보았다'},
+                       {'transcript': '불안한 듯 입을 다물고 경주로 지켜봤다'},
+                       {'transcript': '불안한 듯 입을 다물고 경주로 지켜보았다'}],
+    'final': True}

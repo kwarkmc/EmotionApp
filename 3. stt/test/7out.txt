@@ -1,0 +1,8 @@
+¾î¸´±¤´ë°¡ ÇÑ ¸»Àº »ç½ÇÀÌ¾ú´Ù °í¿ä
+result2:
+{   'alternative': [   {'confidence': 0.56360704, 'transcript': '°ð Å»·ç°¡ µÇ¾ú´Ù'},
+                       {'transcript': '±Â Å»·ç°¡ µÇ¾ú´Ù'},
+                       {'transcript': '±Â ÇÏ·ç°¡ µÇ¾ú´Ù'},
+                       {'transcript': '°ð Åº·Î°¡ µÇ¾ú´Ù'},
+                       {'transcript': '±Â Åº·Î°¡ µÇ¾ú´Ù'}],
+    'final': True}

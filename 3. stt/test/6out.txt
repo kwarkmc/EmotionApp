@@ -1,0 +1,9 @@
+불안한 듯 입을 다물고 경주를 지켜봤다
+result2:
+{   'alternative': [   {   'confidence': 0.77363163,
+                           'transcript': '어릿광대가 한 말은 사실이었다 고요'},
+                       {'transcript': '어릿광대가 한 말은 사실이었다 구요'},
+                       {'transcript': '어리광 제가 한 말은 사실이었다 고요'},
+                       {'transcript': '어리광 제가 한 말은 사실이었다 구요'},
+                       {'transcript': '어릿광대가 한 말은 사실이었다고요'}],
+    'final': True}
