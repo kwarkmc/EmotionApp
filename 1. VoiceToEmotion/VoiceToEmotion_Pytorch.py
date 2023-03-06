@@ -124,7 +124,7 @@ print('test X shape:', test_X_ex.shape)
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = nn.Conv2d(in_channels=1, out_channels=32, kernel_size=3, stride=1, padding=0)
+        self.conv1 = nn.Conv2d(in_channels=100, out_channels=32, kernel_size=3, stride=1, padding=0)
         self.pool1 = nn.MaxPool2d(kernel_size=2)
         self.fc1 = nn.Linear(in_features=32*49, out_features=64)
         self.fc2 = nn.Linear(in_features=64, out_features=2)
