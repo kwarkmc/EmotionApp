@@ -13,6 +13,8 @@ from sklearn import preprocessing
 from keras.utils import to_categorical
 import torch
 import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import Dataset, DataLoader
 
 
 
@@ -121,47 +123,73 @@ test_X_ex = np.expand_dims(test_mfccs, -1)
 print('train X shape:', train_X_ex.shape)
 print('test X shape:', test_X_ex.shape)
 
-class Net(nn.Module):
+class MyDataset(Dataset):
+    def __init__(self, X, y):
+        self.X = torch.from_numpy(X).float()
+        self.y = torch.from_numpy(y).float()
+
+    def __len__(self):
+        return len(self.X)
+
+    def __getitem__(self, index):
+        return self.X[index], self.y[index]
+
+class MyModel(nn.Module):
     def __init__(self):
-        super(Net, self).__init__()
-        self.conv1 = nn.Conv2d(in_channels=100, out_channels=32, kernel_size=3, stride=1, padding=0)
+        super(MyModel, self).__init__()
+        self.conv1 = nn.Conv2d(100, 32, kernel_size=3)
+        self.relu1 = nn.ReLU()
         self.pool1 = nn.MaxPool2d(kernel_size=2)
-        self.fc1 = nn.Linear(in_features=32*49, out_features=64)
-        self.fc2 = nn.Linear(in_features=64, out_features=2)
-        self.relu = nn.ReLU()
+        self.flatten = nn.Flatten()
+        self.fc1 = nn.Linear(32 * 49 * 231, 6)
+        self.relu2 = nn.ReLU()
+        self.fc2 = nn.Linear(64, 2)
         self.sigmoid = nn.Sigmoid()
 
     def forward(self, x):
         x = self.conv1(x)
-        x = self.relu(x)
+        x = self.relu1(x)
         x = self.pool1(x)
-        x = x.view(-1, 32*49)
+        x = self.flatten(x)
         x = self.fc1(x)
-        x = self.relu(x)
-        x = self.fc2(x)
+        x = self.relu2()
+        x = self.fc2()
         x = self.sigmoid(x)
         return x
 
-model = Net()
+num_epoch = 10
+batch_size = 16
+learning_rate = 0.001
+
+train_dataset = MyDataset(train_X_ex, train_y)
+test_dataset = MyDataset(test_X_ex, test_y)
+
+train_dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+test_dataloader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
+
+
+model = MyModel()
 criterion = nn.BCELoss()
-optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+optimizer = optim.Adam(model.parameters(), lr = learning_rate)
 
-train_X_ex = torch.tensor(train_X_ex, dtype=torch.float32)
-train_y = torch.tensor(train_y, dtype=torch.float32)
-test_X_ex = torch.tensor(test_X_ex, dtype=torch.float32)
-test_y = torch.tensor(test_y, dtype=torch.float32)
-
-for epoch in range(10):
-    running_loss = 0.0
-    for i in range(0, len(train_X_ex), 16):
-        inputs = train_X_ex[i:i+16]
-        labels = train_y[i:i+16]
+for epoch in range(num_epoch):
+    for X, y in train_dataloader:
+        y_pred = model(X)
+        loss = criterion(y_pred, y)
         optimizer.zero_grad()
-        outputs = model(inputs)
-        loss = criterion(outputs, labels)
         loss.backward()
         optimizer.step()
-        running_loss += loss.item()
-    print('Epoch %d loss: %.3f' % (epoch + 1, running_loss / len(train_X_ex)))
+
+    with torch.no_grad():
+        correct = 0
+        total = 0
+        for X, y in test_dataloader:
+            y_pred = model(X)
+            predicted = torch.round(y_pred)
+            total += y.size(0)
+            correct += (predicted == y).sum().item()
+        accuracy = 100 * correct / total
+
+    print(f"Epoch [{epoch + 1}/{num_epoch}], Loss : {loss.item():.4f}, Accuracy : {accuracy:.2f}%")
 
 torch.save(model.state_dict(), './weight.pt')
