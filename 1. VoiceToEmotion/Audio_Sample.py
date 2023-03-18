@@ -108,7 +108,7 @@ temp = r.recognize_google(VTT_audio, language='ko-KR')
 
 sys.stdout = open(str(name) + '.txt', 'w')
 print(temp)
-sys.stdout.close()
+#sys.stdout.close()
 
 
 # In[ ]:
