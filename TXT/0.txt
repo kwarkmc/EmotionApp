@@ -1,0 +1,8 @@
+result2:
+{   'alternative': [   {   'confidence': 0.8971411,
+                           'transcript': '엿장수는 숟가락과 여탄 주먹을 바꿔주었다'},
+                       {'transcript': '엿장수는 숟가락과 여탕 주먹을 바꿔주었다'},
+                       {'transcript': '엿장수는 숟가락과 여타 주먹을 바꿔주었다'},
+                       {'transcript': '엿장수는 숟가락과 연탄 주먹을 바꿔주었다'},
+                       {'transcript': '엿장수는 숟가락과 여탐 주먹을 바꿔주었다'}],
+    'final': True}
