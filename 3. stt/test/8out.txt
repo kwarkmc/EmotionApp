@@ -1,0 +1,9 @@
+곧 탈루가 되었다
+result2:
+{   'alternative': [   {   'confidence': 0.7885012,
+                           'transcript': '음울한 잿빛을 치란 풍신 기가 달려 있었다'},
+                       {'transcript': '음울한 잿빛을 친한 풍신 기가 달려 있었다'},
+                       {'transcript': '음울한 잿빛을 치란 풍신기가 달려 있었다'},
+                       {'transcript': '음울한 잿빛을 칠한 풍신기가 달려 있었다'},
+                       {'transcript': '음울한 z77 한풍 신기가 달려 있었다'}],
+    'final': True}

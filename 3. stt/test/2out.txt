@@ -1,0 +1,5 @@
+너무 야속합니다
+result2:
+{   'alternative': [   {'confidence': 0.92365956, 'transcript': '어디 보자'},
+                       {'transcript': '어디보자'}],
+    'final': True}

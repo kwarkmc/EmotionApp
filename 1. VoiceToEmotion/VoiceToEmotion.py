@@ -106,7 +106,7 @@ for filename in os.listdir(DATA_DIR + "test/"):
     wav, sr = librosa.load(DATA_DIR + "test/" + filename, sr=None)
     print(filename)
 
-    mfcc = librosa.feature.mfcc(wav, sr=sr, n_mfcc=100, n_fft=400, hop_length=160)
+    mfcc = librosa.feature.mfcc(y = wav, sr=sr, n_mfcc=100, n_fft=400, hop_length=160)
     mfcc = sklearn.preprocessing.scale(mfcc, axis=1)
     padded_mfcc = pad2d(mfcc, 700)
 
@@ -203,3 +203,4 @@ plt.plot(history.history['val_accuracy'], label='Validation Accuracy')
 plt.xlabel('Epochs')
 plt.ylabel('Accuracy')
 plt.legend()
+plt.savefig('savefig_default.png')

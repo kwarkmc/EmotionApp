@@ -1,0 +1,9 @@
+전속력으로 말을 달려 성문 앞에 이렇지만 화살은 그를 향해 있었다
+result2:
+{   'alternative': [   {   'confidence': 0.9236595,
+                           'transcript': '두 눈에 눈물이 핑 돌았습니다'},
+                       {'transcript': '2 눈에 눈물이 핑 돌았습니다'},
+                       {'transcript': '두 눈에 눈물이 핑 돌아섰습니다'},
+                       {'transcript': '두 눈에 눈물이 핑 돌아왔습니다'},
+                       {'transcript': '두 눈에 눈물이 핑핑 돌았습니다'}],
+    'final': True}
