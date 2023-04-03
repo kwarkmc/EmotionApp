@@ -4,11 +4,11 @@
 # In[1]:
 
 
-from tensorflow.keras import models
-from tensorflow.keras import layers
-from tensorflow.keras import optimizers
-from tensorflow.keras import losses
-from tensorflow.keras import metrics
+#from tensorflow.keras import models
+#from tensorflow.keras import layers
+#from tensorflow.keras import optimizers
+#from tensorflow.keras import losses
+#from tensorflow.keras import metrics
 from keras.models import load_model
 
 import numpy as np
@@ -69,21 +69,44 @@ for filename in os.listdir("WAV/"):
 
 # Voice To Text _ 이승렬
 
-# In[6]:
-
-
+# In[7]:
 name = 0
 
+# for filename in os.listdir("WAV/"):
+#     filename = normalize('NFC', filename)
+#     try:
+#         if '.wav' not in filename in filename:
+#             continue
+        
+#         r = VTT.Recognizer()
+#         kr_audio = VTT.AudioFile("WAV/" + filename)
+#         with kr_audio as source:
+#             VTT_audio = r.record(source)
+            
+#         temp = r.recognize_google(VTT_audio, language='ko-KR')
+        
+#         with open('TXT/' + str(name) + 'out.txt', 'w') as f:
+#             first_line = temp.split('\n')[0]
+#             print(first_line, file=f)
+        
+#         #TODO : _승렬 stdout.close를 하지 않아서 그런지, Sample 두개가 있었는데 첫 번째 샘플만 txt 파일이 생성되고, 두 번째 샘플에는 빈 txt 파일이 생성되는 문제 생김.
+#         #transcript 안에 있는 문자열만 저장해줘
+        
+#         name = name + 1
+        
+#     except Exception as e:
+#         print(filename, e)
+#         raise
 
-# In[7]:
-
+if not os.path.exists('TXT'):
+    os.makedirs('TXT')
 
 for filename in os.listdir("WAV/"):
+    if not filename.endswith('.wav'):
+        continue
+    
     filename = normalize('NFC', filename)
     try:
-        if '.wav' not in filename in filename:
-            continue
-        
         r = VTT.Recognizer()
         kr_audio = VTT.AudioFile("WAV/" + filename)
         with kr_audio as source:
@@ -91,18 +114,13 @@ for filename in os.listdir("WAV/"):
             
         temp = r.recognize_google(VTT_audio, language='ko-KR')
         
-        with open('TXT/' + str(name) + 'out.txt', 'w') as f:
+        # Get the file name without extension
+        name = os.path.splitext(filename)[0]
+        with open("TXT/" + str(name) + 'out.txt', 'w') as f:
             first_line = temp.split('\n')[0]
             print(first_line, file=f)
-        
-        #TODO : _승렬 stdout.close를 하지 않아서 그런지, Sample 두개가 있었는데 첫 번째 샘플만 txt 파일이 생성되고, 두 번째 샘플에는 빈 txt 파일이 생성되는 문제 생김.
-        #transcript 안에 있는 문자열만 저장해줘
-        
-        name = name + 1
-        
     except Exception as e:
-        print(filename, e)
-        raise
+        print(f"Error processing file {filename}: {str(e)}")
 
 
 # Text To Emotion _ 김지호
@@ -196,8 +214,9 @@ for filename in os.listdir("TXT/"):
         input_txt = f.read()
         f.close()
         print(input_txt)
-        #TTE_Result = predict_pos_neg("오늘은 기분이 안좋아")
-        predict_pos_neg(input_txt)
+
+        TTE_Result = predict_pos_neg("오늘은 기분이 안좋아")
+        #TTE_Result = predict_pos_neg(input_txt)
         TTE_Array.append(TTE_Result)
         
     except Exception as e:
