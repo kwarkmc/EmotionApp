@@ -70,34 +70,6 @@ for filename in os.listdir("WAV/"):
 # Voice To Text _ 이승렬
 
 # In[7]:
-name = 0
-
-# for filename in os.listdir("WAV/"):
-#     filename = normalize('NFC', filename)
-#     try:
-#         if '.wav' not in filename in filename:
-#             continue
-        
-#         r = VTT.Recognizer()
-#         kr_audio = VTT.AudioFile("WAV/" + filename)
-#         with kr_audio as source:
-#             VTT_audio = r.record(source)
-            
-#         temp = r.recognize_google(VTT_audio, language='ko-KR')
-        
-#         with open('TXT/' + str(name) + 'out.txt', 'w') as f:
-#             first_line = temp.split('\n')[0]
-#             print(first_line, file=f)
-        
-#         #TODO : _승렬 stdout.close를 하지 않아서 그런지, Sample 두개가 있었는데 첫 번째 샘플만 txt 파일이 생성되고, 두 번째 샘플에는 빈 txt 파일이 생성되는 문제 생김.
-#         #transcript 안에 있는 문자열만 저장해줘
-        
-#         name = name + 1
-        
-#     except Exception as e:
-#         print(filename, e)
-#         raise
-
 if not os.path.exists('TXT'):
     os.makedirs('TXT')
 
@@ -121,6 +93,8 @@ for filename in os.listdir("WAV/"):
             print(first_line, file=f)
     except Exception as e:
         print(f"Error processing file {filename}: {str(e)}")
+
+        # TXT 파일을 name 변수에 따라 저장하는것이 아닌, 원본 wav 파일의 이름 뒤에 out.txt를 붙여서 저장하도록 수정
 
 
 # Text To Emotion _ 김지호
