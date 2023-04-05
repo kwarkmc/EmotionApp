@@ -167,6 +167,7 @@ def predict_pos_neg(review):
     token = tokenize(review)
     tf = term_frequency(token)
     data = np.expand_dims(np.array(tf).astype('float32'),axis=0)
+    data = np.expand_dims(data, axis=0)
     score = float(model.predict(data))
     if(score>0.5):
         print("오늘의 긍정지수는 {:2f}%입니다.\n".format(score*100))
