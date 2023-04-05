@@ -31,6 +31,8 @@ class DataGenerator(keras.utils.Sequence):
 				label = 1
 			elif ('부' in file):
 				label = 0
+			data = np.expand_dims(data, -1)
+			label = np.expand_dims(label, -1)
 			batch_data.append(data)
 			batch_labels.append(label)
 		batch_label = to_categorical(batch_labels, num_classes=2)
@@ -49,7 +51,7 @@ model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(100, 700, 1)
 model.add(layers.MaxPooling2D((2, 2)))
 model.add(layers.Flatten())
 model.add(layers.Dense(64, activation='relu'))
-model.add(layers.Dense(1, activation='sigmoid'))
+model.add(layers.Dense(2, activation='softmax'))
 
 model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
 
