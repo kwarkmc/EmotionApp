@@ -190,8 +190,8 @@ for filename in os.listdir("TXT/"):
         f.close()
         print(input_txt)
 
-        TTE_Result = predict_pos_neg("오늘은 기분이 안좋아")
-        #TTE_Result = predict_pos_neg(input_txt)
+        #TTE_Result = predict_pos_neg("오늘은 기분이 안좋아")
+        TTE_Result = predict_pos_neg(input_txt)
         TTE_Array.append(TTE_Result)
         
     except Exception as e:

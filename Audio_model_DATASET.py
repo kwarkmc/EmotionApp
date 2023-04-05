@@ -26,7 +26,11 @@ class DataGenerator(keras.utils.Sequence):
 		batch_labels = []
 		for file in batch_files:
 			data = np.load(os.path.join(self.data_path, file))
-			label = 1 if '긍' in file else 0
+			#label = 1 if '긍' in file else 0
+			if '긍' in file:
+				label = 1
+			elif ('부' in file):
+				label = 0
 			batch_data.append(data)
 			batch_labels.append(label)
 		batch_label = to_categorical(batch_labels, num_classes=2)
