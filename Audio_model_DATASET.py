@@ -6,6 +6,9 @@ from unicodedata import normalize
 import tensorflow as tf
 from keras import layers
 from keras.utils import to_categorical
+from tensorflow.python.keras.callbacks import TensorBoard
+from time import time
+from keras.callbacks import EarlyStopping, ModelCheckpoint
 
 class DataGenerator(keras.utils.Sequence):
 	
@@ -48,15 +51,25 @@ test_generator = DataGenerator(test_data_path, batch_size, is_train=False)
 #Make the CNN model using train_generator and test_generator
 model = tf.keras.Sequential()
 model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(100, 700, 1)))
+model.add(layers.Conv2D(32, (3, 3), activation='relu'))
+model.add(layers.Conv2D(32, (3, 3), activation='relu'))
+model.add(layers.Conv2D(32, (3, 3), activation='relu'))
+model.add(layers.Conv2D(32, (3, 3), activation='relu'))
 model.add(layers.MaxPooling2D((2, 2)))
 model.add(layers.Flatten())
 model.add(layers.Dense(64, activation='relu'))
 model.add(layers.Dense(2, activation='softmax'))
 
-model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+model.summary()
+
+tensorboard = TensorBoard(log_dir="logs/{}".format(time()))
+early_stop = EarlyStopping(monitor='val_loss', patience=3)
+checkpoint = ModelCheckpoint(filepath='model_{epoch:02d}.h5', monitor='val_accuracy', save_best_only=False)
+
+opt = keras.optimizers.Adam(learning_rate=0.01)
+model.compile(optimizer=opt, loss='binary_crossentropy', metrics=['accuracy'])
 
 
 # 모델 학습 예시
-history = model.fit(train_generator, epochs=10, validation_data=test_generator)
+history = model.fit(train_generator, epochs=50, validation_data=test_generator, callbacks=[early_stop, checkpoint, tensorboard])
 
-model.save("weight.h5")
