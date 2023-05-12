@@ -2,4 +2,6 @@
 
 1. VoiceToEmotion/Data/
 
+weights/
+
 *.h5
