@@ -33,6 +33,7 @@ def upload_file():
           segment.export(os.path.join(foldername, new_filename), format='wav')
 
     ret = process_audio_files()
+    print(ret)
     return str(ret)
 
 if __name__ == '__main__':
