@@ -9,6 +9,7 @@ from keras.utils import to_categorical
 from tensorflow.python.keras.callbacks import TensorBoard
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 import librosa
+import matplotlib.pyplot as plt
 
 def pad1d(a, i):
     return a[0:i] if a.shape[0] > i else np.hstack((a, np.zeros(i - a.shape[0])))
@@ -57,11 +58,6 @@ train_data_path = "1. VoiceToEmotion/Data/train_real"
 test_data_path = "1. VoiceToEmotion/Data/test_real"
 batch_size = 10
 
-train_acc = []
-train_loss = []
-test_acc = []
-test_loss = []
-
 train_generator = DataGenerator(train_data_path, batch_size, is_train=True)
 test_generator = DataGenerator(test_data_path, batch_size, is_train=False)
 
@@ -86,30 +82,21 @@ model.compile(optimizer=opt, loss='binary_crossentropy', metrics=['accuracy'])
 # 모델 학습 예시
 history = model.fit(train_generator, epochs=50, validation_data=test_generator, callbacks=[early_stop, checkpoint])
 
-train_acc = history.history['accuracy']
-train_loss = history.history['loss']
-test_acc = history.history['val_accuracy']
-test_loss = history.history['val_loss']
-
-import matplotlib.pyplot as plt
-
-epochs = range(1, len(train_acc) + 1)
-
-plt.plot(epochs, train_acc, 'bo', label='Training Accuracy')
-plt.plot(epochs, test_acc, 'b', label='Validation Accuracy')
-plt.title('Training and Validation Accuracy')
-plt.xlabel('Epochs')
+plt.plot(history.history['accuracy'], label='accuracy')
+plt.plot(history.history['val_accuracy'], label='val_accuracy')
+plt.xlabel('Epoch')
 plt.ylabel('Accuracy')
-plt.legend()
-plt.savefig('accuracy_plot.png')
+plt.ylim([0, 1])
+plt.legend(loc='lower right')
+plt.savefig('LSTM_accuracy_plot.png')
 plt.close()
 
-plt.plot(epochs, train_loss, 'bo', label='Training Loss')
-plt.plot(epochs, test_loss, 'b', label='Validation Loss')
-plt.title('Training and Validation Loss')
-plt.xlabel('Epochs')
+plt.plot(history.history['loss'], label='loss')
+plt.plot(history.history['val_loss'], label='val_loss')
+plt.xlabel('Epoch')
 plt.ylabel('Loss')
-plt.legend()
-plt.savefig('loss_plot.png')
+plt.ylim([0, 1])
+plt.legend(loc='lower right')
+plt.savefig('LSTM_loss_plot.png')
 plt.close()
 
