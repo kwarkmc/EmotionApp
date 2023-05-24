@@ -4,14 +4,8 @@ import os
 from datetime import datetime
 import pydub
 from pipeLine import process_audio_files
-from keras.models import load_model
-import numpy as np
-import librosa
-import sklearn
 import os
-from unicodedata import normalize
-from tensorflow.keras.layers.experimental.preprocessing import TextVectorization
-import tensorflow as tf
+
 
 app = Flask(__name__)
 
