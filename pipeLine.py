@@ -16,14 +16,16 @@ def process_audio_files():
     today = date.today().strftime('%y%m%d')
     pad2d = lambda a, i: a[:, 0:i] if a.shape[1] > i else np.hstack((a, np.zeros((a.shape[0], i-a.shape[1]))))
     
-    VTE_Array = []
-    TTE_Array = []
+    VTE_Array = [] #Frequency Aware Model의 결과값을 저장하는 배열
+    TTE_Array = [] #Context Aware Model의 결과값을 저장하는 배열
     
-    CNN_model = load_model('weights/weight_result.h5')
+    CNN_model = load_model('weights/weight_result.h5') #Frequency Aware Model 불러오기
 
-    directory_audio = f"{today}/"
-    directory_txt = f"{today}/TXT/"
-    for filename in os.listdir(directory_audio): #TODO 오늘 날짜 폴더를 지정해서 파일 불러오는 방식으로 수정
+    directory_audio = f"{today}/" #오늘 전송받은 Audio 파일들이 저장될 폴더
+    directory_txt = f"{today}/TXT/" #Audio 파일들을 Text로 변환한 파일들이 저장될 폴더
+
+    #Voice To Frequency domain Processing
+    for filename in os.listdir(directory_audio):
         filename = normalize('NFC', filename)
         try:
             if '.wav' not in filename in filename:
@@ -36,6 +38,7 @@ def process_audio_files():
             padded_mfcc = pad2d(mfcc, 700)
             padded_mfcc = np.expand_dims(padded_mfcc, 0)
 
+            #MFCC 변환 후 Frequency Aware Model에 input, 결과값을 VTE_result에 저장
             VTE_result = CNN_model.predict(padded_mfcc)
             VTE_Array.append(VTE_result)
 
@@ -61,7 +64,6 @@ def process_audio_files():
 
             temp = r.recognize_google(VTT_audio, language='ko-KR')
 
-            # Get the file name without extension
             name = os.path.splitext(filename)[0]
             with open(directory_txt + str(name) + 'out.txt', 'w') as f:
                 first_line = temp.split('\n')[0]
@@ -70,7 +72,7 @@ def process_audio_files():
         except Exception as e:
             print(f"Error processing file {filename}: {str(e)}")
 
-    rnn_model = tf.keras.models.load_model("weights/model_04", custom_objects={"TextVectorization": TextVectorization})
+    rnn_model = tf.keras.models.load_model("weights/model_04", custom_objects={"TextVectorization": TextVectorization}) #Context Aware Model 불러오기
 
     for filename in os.listdir(directory_txt):
         filename = normalize('NFC', filename)
@@ -81,6 +83,7 @@ def process_audio_files():
             input_txt = f.read().strip()
             f.close()
 
+            #Text 변환 후 Context Aware Model에 input, 결과값을 TTE_result에 저장
             emotion = float(rnn_model.predict([input_txt]))
             TTE_Array.append(emotion)
 
