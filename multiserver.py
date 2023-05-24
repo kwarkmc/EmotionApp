@@ -1,6 +1,5 @@
 from flask import Flask, request
 from werkzeug.utils import secure_filename
-import os
 from datetime import datetime
 import pydub
 from pipeLine import process_audio_files
