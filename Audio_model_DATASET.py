@@ -1,7 +1,10 @@
 import os
+import warnings
+
 import numpy as np
 from tensorflow import keras
 import sklearn
+from sklearn import preprocessing
 from unicodedata import normalize
 import tensorflow as tf
 from keras import layers
@@ -10,6 +13,10 @@ from tensorflow.python.keras.callbacks import TensorBoard
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 import librosa
 import matplotlib.pyplot as plt
+
+os.environ["CUDA_VISIBLE_DEVICES"]="0"
+
+warnings.filterwarnings(action='ignore')
 
 def pad1d(a, i):
     return a[0:i] if a.shape[0] > i else np.hstack((a, np.zeros(i - a.shape[0])))
@@ -39,7 +46,7 @@ class DataGenerator(keras.utils.Sequence):
 				continue
 			data, sr = librosa.load(os.path.join(self.data_path, file), sr=16000)
 			data = librosa.feature.mfcc(y=data, sr=sr, n_mfcc=100, n_fft=400, hop_length=160)
-			data = sklearn.preprocessing.scale(data, axis=1)
+			data = preprocessing.scale(data, axis=1)
 			data = pad2d(data, 700)
 
 			if '긍' in file:
@@ -72,10 +79,10 @@ model.add(layers.Dense(2, activation='softmax'))
 model.summary()
 
 #tensorboard = TensorBoard(log_dir="logs/{}".format(time()))
-early_stop = EarlyStopping(monitor='val_loss', patience=3)
+early_stop = EarlyStopping(monitor='val_loss', patience=10)
 checkpoint = ModelCheckpoint(filepath='model_{epoch:02d}.h5', monitor='val_accuracy', save_best_only=False)
 
-opt = keras.optimizers.Adam(learning_rate=0.01)
+opt = keras.optimizers.Adam(learning_rate=0.0001)
 model.compile(optimizer=opt, loss='binary_crossentropy', metrics=['accuracy'])
 
 
@@ -88,7 +95,7 @@ plt.xlabel('Epoch')
 plt.ylabel('Accuracy')
 plt.ylim([0, 1])
 plt.legend(loc='lower right')
-plt.savefig('LSTM_accuracy_plot.png')
+plt.savefig('CNN_accuracy_plot.png')
 plt.close()
 
 plt.plot(history.history['loss'], label='loss')
@@ -97,6 +104,6 @@ plt.xlabel('Epoch')
 plt.ylabel('Loss')
 plt.ylim([0, 1])
 plt.legend(loc='lower right')
-plt.savefig('LSTM_loss_plot.png')
+plt.savefig('CNN_loss_plot.png')
 plt.close()
 

@@ -1,5 +1,6 @@
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+os.environ["CUDA_VISIBLE_DEVICES"]="0"
 from tensorflow.keras import models, layers, optimizers, losses, metrics
 import tensorflow as tf
 from tensorflow.keras.preprocessing.sequence import pad_sequences
@@ -50,7 +51,7 @@ def build_model(train_data):
     train_data = tf.data.Dataset.from_tensor_slices(train_data)
     model = Sequential()
     model.add(Input(shape=(1,), dtype="string"))
-    max_tokens = 15000
+    max_tokens = 150000
     max_len = 50
     vectorize_layer = TextVectorization(
         max_tokens=max_tokens,
@@ -61,8 +62,8 @@ def build_model(train_data):
     vectorize_layer.adapt(train_data.batch(64))
     model.add(vectorize_layer)
     model.add(layers.Embedding(max_tokens + 1, output_dim=200))
-    model.add(LSTM(64, return_sequences=True))
-    model.add(layers.Dropout(0.5))
+    model.add(LSTM(32, return_sequences=True))
+    model.add(layers.Dropout(0.7))
     model.add(Flatten())
     model.add(Dense(8, activation="relu"))
     model.add(Dense(1, activation="sigmoid"))
@@ -70,7 +71,7 @@ def build_model(train_data):
 
 tf.config.experimental_enable_xla=True
 
-early_stop = EarlyStopping(monitor='val_loss', patience=3)
+early_stop = EarlyStopping(monitor='val_loss', patience=10)
 checkpoint = ModelCheckpoint(filepath='model_{epoch:02d}', save_format='tf', monitor='val_accuracy', save_best_only=False)
 
 rnn_model = build_model(x_train)

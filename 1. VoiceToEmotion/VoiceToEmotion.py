@@ -11,14 +11,16 @@ import numpy as np
 import librosa
 import librosa.display
 import sklearn
+from sklearn import preprocessing
 from unicodedata import normalize
 import tensorflow as tf
-from keras import layers
+from keras import layers, optimizers
 import random as rn
 from keras.layers import Dense
 from keras import Input
 from keras import Model
 from keras.utils import to_categorical
+from keras.callbacks import EarlyStopping, ModelCheckpoint
 
 
 # In[2]:
@@ -68,14 +70,14 @@ filename = os.listdir(DATA_DIR)
 #mfcc 한 데이터를 시각화 하여 볼 수 있음
 
 # train data를 넣는다.
-for filename in os.listdir(DATA_DIR + "train/"):
+for filename in os.listdir(DATA_DIR + "train_real/"):
   filename = normalize('NFC', filename)
   try:
     # wav 포맷 데이터만 사용
     if '.wav' not in filename in filename:
       continue
       
-    wav, sr = librosa.load(DATA_DIR+ "train/"+ filename, sr=None)
+    wav, sr = librosa.load(DATA_DIR+ "train_real/"+ filename, sr=None)
     print(filename)
     
     mfcc = librosa.feature.mfcc(y = wav, sr=sr, n_mfcc=100, n_fft=400, hop_length=160)
@@ -96,14 +98,14 @@ random.shuffle(trainset)
 
 
 # test data를 넣는다.
-for filename in os.listdir(DATA_DIR + "test/"):
+for filename in os.listdir(DATA_DIR + "test_real/"):
   filename = normalize('NFC', filename)
   try:
     # wav 포맷 데이터만 사용
     if '.wav' not in filename in filename:
       continue
 
-    wav, sr = librosa.load(DATA_DIR + "test/" + filename, sr=None)
+    wav, sr = librosa.load(DATA_DIR + "test_real/" + filename, sr=None)
     print(filename)
 
     mfcc = librosa.feature.mfcc(y = wav, sr=sr, n_mfcc=100, n_fft=400, hop_length=160)
@@ -187,14 +189,21 @@ history = model.fit(train_X_ex,
 
 model = tf.keras.Sequential()
 model.add(layers.Conv2D(filters=32, kernel_size=(3, 3), activation='relu', input_shape=(100, 700, 1)))
+model.add(layers.Dropout(0.2))
 model.add(layers.MaxPooling2D(pool_size=(2, 2)))
 model.add(layers.Flatten())
 model.add(layers.Dense(64, activation='relu'))
 model.add(layers.Dense(2, activation='sigmoid'))
 
-model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+model.summary()
 
-history = model.fit(train_X_ex, train_y, epochs=10, batch_size=16, validation_data=(test_X_ex, test_y))
+early_stop = EarlyStopping(monitor='val_loss', patience=10)
+checkpoint = ModelCheckpoint(filepath='model_{epoch:02d}.h5', monitor='val_accuracy', save_best_only=False)
+
+opt = optimizers.Adam(learning_rate=0.0001)
+model.compile(optimizer=opt, loss='binary_crossentropy', metrics=['accuracy'])
+
+history = model.fit(train_X_ex, train_y, epochs=50, batch_size=16, validation_data=(test_X_ex, test_y), callbacks=[early_stop, checkpoint])
 
 model.save('./weight.h5')
 
@@ -203,4 +212,11 @@ plt.plot(history.history['val_accuracy'], label='Validation Accuracy')
 plt.xlabel('Epochs')
 plt.ylabel('Accuracy')
 plt.legend()
-plt.savefig('savefig_default.png')
+plt.savefig('Accuracy.png')
+
+plt.plot(history.history['loss'], label='Train Loss')
+plt.plot(history.history['val_loss'], label='Validation Loss')
+plt.xlabel('Epochs')
+plt.ylabel('Accuracy')
+plt.legend()
+plt.savefig('Loss.png')
