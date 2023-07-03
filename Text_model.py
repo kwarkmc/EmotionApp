@@ -14,8 +14,8 @@ from keras.callbacks import EarlyStopping, ModelCheckpoint
 import matplotlib.pyplot as plt
 
 x, y = [], []
-file1 = "./comment-labeling.csv"
-file2 = "./naver-ratings.csv"
+file1 = "./Datasets/comment-labeling.csv"
+file2 = "./Datasets/naver-ratings.csv"
 
 f = open(file1, 'r', encoding='utf-8')
 read = csv.reader(f)
@@ -72,7 +72,7 @@ def build_model(train_data):
 tf.config.experimental_enable_xla=True
 
 early_stop = EarlyStopping(monitor='val_loss', patience=10)
-checkpoint = ModelCheckpoint(filepath='model_{epoch:02d}', save_format='tf', monitor='val_accuracy', save_best_only=False)
+checkpoint = ModelCheckpoint(filepath='./weights/model_{epoch:02d}', save_format='tf', monitor='val_accuracy', save_best_only=False)
 
 rnn_model = build_model(x_train)
 rnn_model.compile(
@@ -98,7 +98,7 @@ plt.xlabel('Epoch')
 plt.ylabel('Accuracy')
 plt.ylim([0.5, 1])
 plt.legend(loc='lower right')
-plt.savefig('LSTM_accuracy_plot.png')
+plt.savefig('./Plots/LSTM_accuracy_plot.png')
 plt.close()
 
 plt.plot(history.history['loss'], label='loss')
@@ -107,5 +107,5 @@ plt.xlabel('Epoch')
 plt.ylabel('Loss')
 plt.ylim([0, 1])
 plt.legend(loc='lower right')
-plt.savefig('LSTM_loss_plot.png')
+plt.savefig('./Plots/LSTM_loss_plot.png')
 plt.close()

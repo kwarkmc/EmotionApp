@@ -11,7 +11,7 @@ pad2d = lambda a, i: a[:, 0:i] if a.shape[1] > i else np.hstack((a, np.zeros((a.
 import warnings
 warnings.filterwarnings('ignore')
 
-DATA_DIR = '1. VoiceToEmotion/Data/'
+DATA_DIR = './Datasets'
 
 trainset = []
 testset = []

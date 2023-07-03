@@ -1,162 +1,109 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[1]:
-
-
 import os
-import random
+import warnings
+
 import numpy as np
-import librosa
-import librosa.display
+from tensorflow import keras
 import sklearn
+from sklearn import preprocessing
 from unicodedata import normalize
 import tensorflow as tf
 from keras import layers
 from keras.utils import to_categorical
+from tensorflow.python.keras.callbacks import TensorBoard
+from keras.callbacks import EarlyStopping, ModelCheckpoint
+import librosa
+import matplotlib.pyplot as plt
 
+os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
-# In[2]:
+warnings.filterwarnings(action='ignore')
 
+def pad1d(a, i):
+    return a[0:i] if a.shape[0] > i else np.hstack((a, np.zeros(i - a.shape[0])))
 
-DATA_DIR = '1. VoiceToEmotion/Data/'
+def pad2d(a, i):
+    return a[:, 0:i] if a.shape[1] > i else np.hstack((a, np.zeros((a.shape[0], i - a.shape[1]))))
 
+class DataGenerator(keras.utils.Sequence):
+	
+	def __init__(self, data_path, batch_size, is_train):
+		self.data_path = data_path
+		self.batch_size = batch_size
+		self.files = os.listdir(data_path)
+		self.num_files = len(self.files)
+		self.indexes = np.arange(self.num_files)
+		self.is_train = is_train
+	
+	def __len__(self):
+		return int(np.ceil(self.num_files / float(self.batch_size)))
+	
+	def __getitem__(self, index):
+		batch_files = self.files[index*self.batch_size:(index+1)*self.batch_size]
+		batch_data = []
+		batch_labels = []
+		for file in batch_files:
+			if '.wav' not in file in file:
+				continue
+			data, sr = librosa.load(os.path.join(self.data_path, file), sr=16000)
+			data = librosa.feature.mfcc(y=data, sr=sr, n_mfcc=100, n_fft=400, hop_length=160)
+			data = preprocessing.scale(data, axis=1)
+			data = pad2d(data, 700)
 
-# In[3]:
+			if '긍' in file:
+				label = 1
+			elif ('부' in file):
+				label = 0
 
+			data = np.expand_dims(data, -1)
+			label = np.expand_dims(label, -1)
+			batch_data.append(data)
+			batch_labels.append(label)
+		batch_label = to_categorical(batch_labels, num_classes=2)
+		return np.array(batch_data), np.array(batch_labels)
 
-trainset = []
-testset = []
+train_data_path = "./Datasets/train_real"
+test_data_path = "./Datasets/test_real
+batch_size = 10
 
-
-# In[4]:
-
-
-train_X = []
-train_mfccs = []
-train_y = []
-
-
-# In[5]:
-
-
-test_X = []
-test_mfccs = []
-test_y = []
-
-
-# In[6]:
-
-
-frame_length = 0.025
-frame_stride = 0.0010
-
-
-# In[7]:
-
-
-filename = os.listdir(DATA_DIR)
-
-
-# In[8]:
-
-
-for filename in os.listdir(DATA_DIR + "train/"):
-    filename = normalize('NFC', filename)
-    try:
-        if '.npy' not in filename in filename:
-            continue
-            
-        padded_mfcc = np.load(DATA_DIR + 'train/' + filename, allow_pickle=True)
-        print(filename)
-        
-        if filename[0] == '긍':
-            trainset.append((padded_mfcc, 0))
-        elif filename[0] == '부':
-            trainset.append((padded_mfcc, 1))
-    except Exception as e:
-        print(filename, e)
-        raise
-
-random.shuffle(trainset)
-
-
-# In[10]:
-
-
-for filename in os.listdir(DATA_DIR + "test/"):
-    filename = normalize('NFC', filename)
-    try:
-        if '.npy' not in filename in filename:
-            continue
-            
-        padded_mfcc = np.load(DATA_DIR + 'test/' + filename, allow_pickle=True)
-        print(filename)
-        
-        if filename[0] == '긍':
-            testset.append((padded_mfcc, 0))
-        elif filename[0] == '부':
-            testset.append((padded_mfcc, 1))
-    except Exception as e:
-        print(filename, e)
-        raise
-
-random.shuffle(testset)
-
-
-# In[11]:
-
-
-train_mfccs = [a for (a, b) in trainset]
-train_y = [b for (a, b) in trainset]
-
-test_mfccs = [a for (a, b) in testset]
-test_y = [b for (a, b) in testset]
-
-train_mfccs = np.array(train_mfccs)
-train_y = to_categorical(np.array(train_y))
-
-test_mfccs = np.array(test_mfccs)
-test_y = to_categorical(np.array(test_y))
-
-print('train_mfccs:', train_mfccs.shape)
-print('train_y:', train_y.shape)
-
-print('test_mfccs:', test_mfccs.shape)
-print('test_y:', test_y.shape)
-
-
-# In[12]:
-
-
-train_X_ex = np.expand_dims(train_mfccs, -1)
-test_X_ex = np.expand_dims(test_mfccs, -1)
-
-print('train X shape:', train_X_ex.shape)
-print('test Y shape:', test_X_ex.shape)
-
-
-# In[13]:
-
+train_generator = DataGenerator(train_data_path, batch_size, is_train=True)
+test_generator = DataGenerator(test_data_path, batch_size, is_train=False)
 
 model = tf.keras.Sequential()
-model.add(layers.Conv2D(filters=32, kernel_size=(3, 3), activation='relu', input_shape=(100, 700, 1)))
-model.add(layers.MaxPooling2D(pool_size=(2, 2)))
+model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(100, 700, 1)))
+model.add(layers.MaxPooling2D((2, 2)))
 model.add(layers.Flatten())
-model.add(layers.Dense(64, activation='relu'))
-model.add(layers.Dense(2, activation='sigmoid'))
+model.add(layers.Dense(64, activation='relu', kernel_regularizer=keras.regularizers.l1(0.01)))
+model.add(layers.Dropout(0.2))
+model.add(layers.Dense(2, activation='softmax'))
 
-model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+model.summary()
+
+#tensorboard = TensorBoard(log_dir="logs/{}".format(time()))
+early_stop = EarlyStopping(monitor='val_loss', patience=10)
+checkpoint = ModelCheckpoint(filepath='./weights/model_{epoch:02d}.h5', monitor='val_accuracy', save_best_only=False)
+
+opt = keras.optimizers.Adam(learning_rate=0.0001)
+model.compile(optimizer=opt, loss='binary_crossentropy', metrics=['accuracy'])
 
 
-# In[14]:
+# 모델 학습 예시
+history = model.fit(train_generator, epochs=50, validation_data=test_generator, callbacks=[early_stop, checkpoint])
 
+plt.plot(history.history['accuracy'], label='accuracy')
+plt.plot(history.history['val_accuracy'], label='val_accuracy')
+plt.xlabel('Epoch')
+plt.ylabel('Accuracy')
+plt.ylim([0, 1])
+plt.legend(loc='lower right')
+plt.savefig('./Plots/CNN_accuracy_plot.png')
+plt.close()
 
-history = model.fit(train_X_ex, train_y, epochs=10, batch_size=16, validation_data=(test_X_ex, test_y))
-
-
-# In[ ]:
-
-
-model.save("weight.h5")
+plt.plot(history.history['loss'], label='loss')
+plt.plot(history.history['val_loss'], label='val_loss')
+plt.xlabel('Epoch')
+plt.ylabel('Loss')
+plt.ylim([0, 1])
+plt.legend(loc='lower right')
+plt.savefig('./Plots/CNN_loss_plot.png')
+plt.close()
 

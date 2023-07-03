@@ -2,6 +2,9 @@
 
 1. VoiceToEmotion/Data/
 
+Datasets/
+Datasets
+
 weights/
 
 *.h5
