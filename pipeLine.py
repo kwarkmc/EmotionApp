@@ -19,7 +19,7 @@ def process_audio_files():
     VTE_Array = [] #Frequency Aware Model의 결과값을 저장하는 배열
     TTE_Array = [] #Context Aware Model의 결과값을 저장하는 배열
     
-    CNN_model = load_model('weights/weight_result.h5') #Frequency Aware Model 불러오기
+    CNN_model = load_model('weights/model_05.h5') #Frequency Aware Model 불러오기
 
     directory_audio = f"{today}/" #오늘 전송받은 Audio 파일들이 저장될 폴더
     directory_txt = f"{today}/TXT/" #Audio 파일들을 Text로 변환한 파일들이 저장될 폴더
@@ -98,12 +98,15 @@ def process_audio_files():
     TTE_Array = np.array(TTE_Array)
     TTE_Mean = np.mean(TTE_Array, axis=0)
 
+    print("VTE_Result : " + str(VTE_Mean))
+    print("TTE_Result : " + str(TTE_Mean))
+
     result = (VTE_Mean + TTE_Mean) / 2
     result = round(result, 4)
     result = result * 100
+    print("Final Result : " + str(result))
 
     return result
 
 if __name__ == '__main__':
     result = process_audio_files()
-    print(result)

@@ -4,9 +4,11 @@ from datetime import datetime
 import pydub
 from pipeLine import process_audio_files
 import os
+import warnings
 
 
 app = Flask(__name__)
+warnings.filterwarnings("ignore")
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
