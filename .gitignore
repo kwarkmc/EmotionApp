@@ -8,3 +8,5 @@ Datasets
 weights/
 
 *.h5
+
+__pycache__/
