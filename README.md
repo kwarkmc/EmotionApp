@@ -12,11 +12,11 @@
 
 ## 팀 멤버 소개
 
-|      18학번 곽민창       |          18학번 김지호         |          18학번 이승렬         |
-|:---:|:---:|:---:|
-   <img width="320px" src="https://avatars.githubusercontent.com/u/41298500?v=4" />|<img width="320px" src="https://avatars.githubusercontent.com/u/124140035?v=4" />|<img width="320px" src="https://avatars.githubusercontent.com/u/124139834?v=4" />|
-|   [@kwarkmc](https://github.com/kwarkmc)   |    [@kjh-0523](https://github.com/kjh-0523)  |    [@leeseungry](https://github.com/leeseungry)  |
-| 한양대학교 ERICA 전자공학부      4학년 | 한양대학교 ERICA 전자공학부     4학년 | 한양대학교 ERICA 전자공학부     4학년 |
+|                                  18학번 곽민창                                   |                                   18학번 김지호                                   |                                   18학번 이승렬                                   |
+| :------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------: |
+| <img width="320px" src="https://avatars.githubusercontent.com/u/41298500?v=4" /> | <img width="320px" src="https://avatars.githubusercontent.com/u/124140035?v=4" /> | <img width="320px" src="https://avatars.githubusercontent.com/u/124139834?v=4" /> |
+|                      [@kwarkmc](https://github.com/kwarkmc)                      |                     [@kjh-0523](https://github.com/kjh-0523)                      |                   [@leeseungry](https://github.com/leeseungry)                    |
+|                      한양대학교 ERICA 전자공학부      4학년                      |                       한양대학교 ERICA 전자공학부     4학년                       |                       한양대학교 ERICA 전자공학부     4학년                       |
 
 ## 한양대학교 ERICA 전자공학부 2023년도 캡스톤 디자인 2
 
@@ -87,11 +87,11 @@ $ python ./Text_model.py # 텍스트 모델 학습
 
 ---
 ## RESULT 📺
-| Loss Graph  |  Accuracy Graph   |
-| :-------------------------------------------: | :------------: |
-|  <img width="329" src="https://github.com/kwarkmc/HelpDefault/blob/main/Document/pic/Loss.png?raw=true"/> |  <img width="329" src="https://github.com/kwarkmc/HelpDefault/blob/main/Document/pic/acc.png?raw=true"/>|  
-| Flask API를 이용하여 웹서버 구현   |  RESULT   |  
-| <img width="329" src="https://github.com/kwarkmc/HelpDefault/blob/main/Document/pic/flask.png?raw=true"/>   |  <img width="329" src="https://github.com/kwarkmc/HelpDefault/blob/main/Document/pic/result.png?raw=true"/>     |
+|                                                Loss Graph                                                 |                                               Accuracy Graph                                               |
+| :-------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------: |
+| <img width="329" src="https://github.com/kwarkmc/HelpDefault/blob/main/Document/pic/Loss.png?raw=true"/>  |  <img width="329" src="https://github.com/kwarkmc/HelpDefault/blob/main/Document/pic/acc.png?raw=true"/>   |
+|                                     Flask API를 이용하여 웹서버 구현                                      |                                                   RESULT                                                   |
+| <img width="329" src="https://github.com/kwarkmc/HelpDefault/blob/main/Document/pic/flask.png?raw=true"/> | <img width="329" src="https://github.com/kwarkmc/HelpDefault/blob/main/Document/pic/result.png?raw=true"/> |
 
 > VGG-16의 Pretrained 데이터를 사용하여 전이학습을 진행했기 때문에 Accuracy는 2 epoch 만에, val_accuracy 또한 8 epoch 만에 좋은 값을 만들어내고 있다.
 ---
